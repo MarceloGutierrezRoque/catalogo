@@ -1,0 +1,33 @@
+{
+  "name": "task-manager-backend",
+  "version": "1.0.0",
+  "description": "Backend para Task Manager con Express y CORS",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node src/index.js"
+  },
+  "keywords": [
+    "task",
+    "manager",
+    "express"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.18.2",
+    "pg": "^8.20.0",
+    "swagger-ui-express": "^5.0.1",
+    "uuid": "^14.0.0",
+    "yaml": "^2.8.4"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
+  }
+}

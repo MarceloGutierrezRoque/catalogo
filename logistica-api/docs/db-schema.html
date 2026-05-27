@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ERD - Logistica API</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --orange: #d29922;
+    --pink: #f778ba;
+    --purple: #bc8cff;
+    --red: #f85149;
+    --cyan: #39d2c0;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 2rem;
+  }
+  h1 {
+    text-align: center;
+    font-size: 1.6rem;
+    color: var(--accent);
+    margin-bottom: .25rem;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--muted);
+    font-size: .85rem;
+    margin-bottom: 2rem;
+  }
+
+  .erd-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    overflow-x: auto;
+  }
+
+  .erd-container {
+    position: relative;
+    width: 1400px;
+    min-height: 1400px;
+  }
+
+  .erd-container svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: visible;
+  }
+
+  .toolbar {
+    display: flex;
+    justify-content: center;
+    gap: .75rem;
+    margin-bottom: 1rem;
+  }
+  .toolbar button {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: .5rem 1.2rem;
+    border-radius: 6px;
+    font-size: .82rem;
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .toolbar button:hover {
+    background: #1c2333;
+    border-color: var(--accent);
+  }
+  .toolbar button.danger:hover {
+    border-color: var(--red);
+  }
+
+  .table-card {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 250px;
+    z-index: 2;
+    box-shadow: 0 4px 24px rgba(0,0,0,.5);
+    transition: box-shadow .2s;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+  }
+  .table-card:active {
+    cursor: grabbing;
+  }
+  .table-card.dragging {
+    z-index: 10;
+    box-shadow: 0 8px 40px rgba(88,166,255,.35);
+    border-color: var(--accent);
+  }
+
+  .table-card .header {
+    padding: .55rem .75rem;
+    font-size: .82rem;
+    font-weight: 700;
+    font-family: 'SFMono-Regular', Consolas, monospace;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .table-card .header .label {
+    color: var(--accent);
+  }
+  .table-card .header .badge {
+    font-size: .55rem;
+    font-weight: 600;
+    padding: .1rem .5rem;
+    border-radius: 999px;
+    background: #1f2937;
+    color: var(--muted);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  .table-card .fields { font-size: .7rem; line-height: 1.45; }
+  .table-card .fields .field {
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+    padding: .18rem .75rem;
+    border-bottom: 1px solid rgba(48,54,61,.35);
+  }
+  .table-card .fields .field:last-child { border-bottom: none; }
+  .table-card .fields .field .name { font-family: 'SFMono-Regular', Consolas, monospace; color: var(--text); flex: 1; }
+  .table-card .fields .field .icon { width: 14px; text-align: center; font-size: .55rem; flex-shrink: 0; }
+  .table-card .fields .field .icon.pk { color: var(--green); }
+  .table-card .fields .field .icon.fk { color: var(--pink); }
+  .table-card .fields .field .icon.audit { color: var(--muted); }
+  .table-card .fields .field .type { color: var(--orange); font-family: 'SFMono-Regular', Consolas, monospace; font-size: .62rem; white-space: nowrap; }
+  .table-card .fields .field .target { color: var(--pink); font-family: 'SFMono-Regular', Consolas, monospace; font-size: .62rem; white-space: nowrap; }
+
+  .color-customer .header { background: linear-gradient(135deg, #0d3a1e, #161b22); border-left: 3px solid var(--green); }
+  .color-warehouse .header { background: linear-gradient(135deg, #0a2a3a, #161b22); border-left: 3px solid var(--accent); }
+  .color-supplier .header { background: linear-gradient(135deg, #1f0a3a, #161b22); border-left: 3px solid var(--purple); }
+  .color-product .header { background: linear-gradient(135deg, #2a1f0a, #161b22); border-left: 3px solid var(--orange); }
+  .color-driver .header { background: linear-gradient(135deg, #2a0a0a, #161b22); border-left: 3px solid var(--red); }
+  .color-transport .header { background: linear-gradient(135deg, #0a2a2a, #161b22); border-left: 3px solid var(--cyan); }
+  .color-route .header { background: linear-gradient(135deg, #2a0a2a, #161b22); border-left: 3px solid var(--pink); }
+  .color-shipment .header { background: linear-gradient(135deg, #0a0a2a, #161b22); border-left: 3px solid #79c0ff; }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 2rem;
+    padding: 1rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: .8rem;
+    flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: .4rem; }
+  .legend-item .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .legend-item .line-sample { display: flex; align-items: center; gap: 2px; }
+  .legend-item .line-sample span { display: block; width: 20px; height: 2px; background: var(--pink); }
+  .legend-item .line-sample .arrow-end { width: 0; height: 0; border-left: 6px solid var(--pink); border-top: 4px solid transparent; border-bottom: 4px solid transparent; }
+
+  @media (max-width: 1100px) {
+    .erd-container { min-height: auto; width: auto; }
+    .table-card { position: static; margin-bottom: 1rem; width: 100%; }
+    .erd-container svg { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<h1>📦 ERD &mdash; Logistica API</h1>
+<p class="subtitle">Modelo Entidad-Relación &bull; 10 tablas &bull; 8 módulos de dominio</p>
+
+<div class="toolbar">
+  <button id="btnReset" title="Volver a posición inicial">↩ Reestablecer</button>
+</div>
+
+<div class="erd-wrap">
+<div class="erd-container" id="erd">
+
+<svg id="lines" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#f778ba" stroke-width="1.2"/>
+    </marker>
+  </defs>
+</svg>
+
+<!-- ===== ROW 1 ===== -->
+
+<div class="table-card color-customer" style="top:20px;left:60px;">
+  <div class="header"><span class="label">customer_customers</span><span class="badge">customer</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon"></span><span class="name">name</span><span class="type">VARCHAR(255)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">customer_type</span><span class="type">VARCHAR(20)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">document_type</span><span class="type">VARCHAR(20)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">document_number</span><span class="type">VARCHAR(50)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">email</span><span class="type">VARCHAR(254)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">phone</span><span class="type">VARCHAR(20)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">address</span><span class="type">TEXT</span></div>
+    <div class="field"><span class="icon"></span><span class="name">city</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">country</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">created_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">updated_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">🗑</span><span class="name">is_active</span><span class="type">BOOLEAN</span></div>
+  </div>
+</div>
+
+<div class="table-card color-warehouse" style="top:20px;left:500px;">
+  <div class="header"><span class="label">warehouse_warehouses</span><span class="badge">warehouse</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon"></span><span class="name">name</span><span class="type">VARCHAR(255)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">code</span><span class="type">VARCHAR(50)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">address</span><span class="type">TEXT</span></div>
+    <div class="field"><span class="icon"></span><span class="name">city</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">country</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">capacity</span><span class="type">INTEGER</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">created_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">updated_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">🗑</span><span class="name">is_active</span><span class="type">BOOLEAN</span></div>
+  </div>
+</div>
+
+<div class="table-card color-supplier" style="top:20px;left:960px;">
+  <div class="header"><span class="label">suppliers_suppliers</span><span class="badge">suppliers</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon"></span><span class="name">name</span><span class="type">VARCHAR(255)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">contact_name</span><span class="type">VARCHAR(255)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">email</span><span class="type">VARCHAR(254)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">phone</span><span class="type">VARCHAR(20)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">address</span><span class="type">TEXT</span></div>
+    <div class="field"><span class="icon"></span><span class="name">city</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">country</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">created_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">updated_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">🗑</span><span class="name">is_active</span><span class="type">BOOLEAN</span></div>
+  </div>
+</div>
+
+<!-- ===== ROW 2 ===== -->
+
+<div class="table-card color-driver" style="top:440px;left:60px;">
+  <div class="header"><span class="label">driver_drivers</span><span class="badge">driver</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">user_id</span><span class="target">→ auth_user</span></div>
+    <div class="field"><span class="icon"></span><span class="name">license_number</span><span class="type">VARCHAR(50)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">phone</span><span class="type">VARCHAR(20)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">email</span><span class="type">VARCHAR(254)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">hire_date</span><span class="type">DATE</span></div>
+    <div class="field"><span class="icon"></span><span class="name">is_available</span><span class="type">BOOLEAN</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">created_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">updated_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">🗑</span><span class="name">is_active</span><span class="type">BOOLEAN</span></div>
+  </div>
+</div>
+
+<div class="table-card color-transport" style="top:440px;left:440px;">
+  <div class="header"><span class="label">transport_transports</span><span class="badge">transport</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon"></span><span class="name">plate</span><span class="type">VARCHAR(20)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">vehicle_type</span><span class="type">VARCHAR(50)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">brand</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">model</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">year</span><span class="type">INTEGER</span></div>
+    <div class="field"><span class="icon"></span><span class="name">capacity_kg</span><span class="type">DECIMAL(10,2)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">capacity_volume</span><span class="type">DECIMAL(10,2)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">is_available</span><span class="type">BOOLEAN</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">created_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">updated_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">🗑</span><span class="name">is_active</span><span class="type">BOOLEAN</span></div>
+  </div>
+</div>
+
+<div class="table-card color-product" style="top:440px;left:840px;">
+  <div class="header"><span class="label">products_products</span><span class="badge">products</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon"></span><span class="name">name</span><span class="type">VARCHAR(255)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">sku</span><span class="type">VARCHAR(50)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">description</span><span class="type">TEXT</span></div>
+    <div class="field"><span class="icon"></span><span class="name">category</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">brand</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">unit_price</span><span class="type">DECIMAL(10,2)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">weight</span><span class="type">DECIMAL(10,3)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">dimensions</span><span class="type">VARCHAR(50)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">stock_quantity</span><span class="type">INTEGER</span></div>
+    <div class="field"><span class="icon"></span><span class="name">min_stock_level</span><span class="type">INTEGER</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">supplier_id</span><span class="target">→ suppliers</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">warehouse_id</span><span class="target">→ warehouse</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">created_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">updated_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">🗑</span><span class="name">is_active</span><span class="type">BOOLEAN</span></div>
+  </div>
+</div>
+
+<!-- ===== ROW 3 ===== -->
+
+<div class="table-card color-route" style="top:840px;left:260px;">
+  <div class="header"><span class="label">route_routes</span><span class="badge">route</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon"></span><span class="name">name</span><span class="type">VARCHAR(255)</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">transport_id</span><span class="target">→ transport</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">driver_id</span><span class="target">→ driver</span></div>
+    <div class="field"><span class="icon"></span><span class="name">start_date</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon"></span><span class="name">end_date</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon"></span><span class="name">status</span><span class="type">VARCHAR(20)</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">created_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">updated_at</span><span class="type">DATETIME</span></div>
+  </div>
+</div>
+
+<div class="table-card color-route" style="top:840px;left:600px;">
+  <div class="header"><span class="label">route_stops</span><span class="badge">route</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">route_id</span><span class="target">→ route</span></div>
+    <div class="field"><span class="icon"></span><span class="name">order</span><span class="type">INTEGER</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">warehouse_id</span><span class="target">→ warehouse</span></div>
+    <div class="field"><span class="icon"></span><span class="name">arrival_time</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon"></span><span class="name">departure_time</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon"></span><span class="name">status</span><span class="type">VARCHAR(20)</span></div>
+  </div>
+</div>
+
+<div class="table-card color-shipment" style="top:840px;left:960px;">
+  <div class="header"><span class="label">shipment_shipments</span><span class="badge">shipment</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon"></span><span class="name">tracking_number</span><span class="type">VARCHAR(50)</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">customer_id</span><span class="target">→ customer</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">origin_warehouse_id</span><span class="target">→ warehouse</span></div>
+    <div class="field"><span class="icon"></span><span class="name">destination_address</span><span class="type">TEXT</span></div>
+    <div class="field"><span class="icon"></span><span class="name">destination_city</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">destination_country</span><span class="type">VARCHAR(100)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">status</span><span class="type">VARCHAR(20)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">shipping_date</span><span class="type">DATE</span></div>
+    <div class="field"><span class="icon"></span><span class="name">estimated_delivery_date</span><span class="type">DATE</span></div>
+    <div class="field"><span class="icon"></span><span class="name">actual_delivery_date</span><span class="type">DATE</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">route_id</span><span class="target">→ route (nullable)</span></div>
+    <div class="field"><span class="icon"></span><span class="name">observations</span><span class="type">TEXT</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">created_at</span><span class="type">DATETIME</span></div>
+    <div class="field"><span class="icon audit">⏱</span><span class="name">updated_at</span><span class="type">DATETIME</span></div>
+  </div>
+</div>
+
+<!-- ===== ROW 4 ===== -->
+
+<div class="table-card color-shipment" style="top:1220px;left:1000px;">
+  <div class="header"><span class="label">shipment_items</span><span class="badge">shipment</span></div>
+  <div class="fields">
+    <div class="field"><span class="icon pk">🔑</span><span class="name">id</span><span class="type">PK</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">shipment_id</span><span class="target">→ shipment</span></div>
+    <div class="field"><span class="icon fk">🔗</span><span class="name">product_id</span><span class="target">→ product</span></div>
+    <div class="field"><span class="icon"></span><span class="name">quantity</span><span class="type">INTEGER</span></div>
+    <div class="field"><span class="icon"></span><span class="name">unit_price_at_shipping</span><span class="type">DECIMAL(10,2)</span></div>
+  </div>
+</div>
+
+</div><!-- /erd-container -->
+</div><!-- /erd-wrap -->
+
+<div class="legend">
+  <span class="legend-item"><span class="dot" style="background:var(--green)"></span> customer</span>
+  <span class="legend-item"><span class="dot" style="background:var(--accent)"></span> warehouse</span>
+  <span class="legend-item"><span class="dot" style="background:var(--purple)"></span> suppliers</span>
+  <span class="legend-item"><span class="dot" style="background:var(--orange)"></span> products</span>
+  <span class="legend-item"><span class="dot" style="background:var(--red)"></span> driver</span>
+  <span class="legend-item"><span class="dot" style="background:var(--cyan)"></span> transport</span>
+  <span class="legend-item"><span class="dot" style="background:var(--pink)"></span> route</span>
+  <span class="legend-item"><span class="dot" style="background:#79c0ff"></span> shipment</span>
+  <span class="legend-item"><span class="line-sample"><span></span><span class="arrow-end"></span></span> FK relationship</span>
+  <span class="legend-item">🔑 PK</span>
+  <span class="legend-item">⏱ Auditoría</span>
+  <span class="legend-item">🗑 Soft Delete</span>
+</div>
+
+<script>
+(function() {
+  function drawLines() {
+    var svg = document.getElementById('lines');
+    var container = document.getElementById('erd');
+    if (!svg || !container) return;
+
+    var pairs = [
+      ['customer_customers', 'shipment_shipments', '1:N'],
+      ['suppliers_suppliers', 'products_products', '1:N'],
+      ['warehouse_warehouses', 'products_products', '1:N'],
+      ['warehouse_warehouses', 'route_stops', '1:N'],
+      ['warehouse_warehouses', 'shipment_shipments', '1:N (origin)'],
+      ['products_products', 'shipment_items', '1:N'],
+      ['shipment_shipments', 'shipment_items', '1:N'],
+      ['shipment_shipments', 'route_routes', 'N:1'],
+      ['route_routes', 'transport_transports', 'N:1'],
+      ['route_routes', 'driver_drivers', 'N:1'],
+      ['route_routes', 'route_stops', '1:N'],
+    ];
+
+    var cards = container.querySelectorAll('.table-card');
+    var map = {};
+    cards.forEach(function(c) {
+      var h = c.querySelector('.header .label');
+      if (h) map[h.textContent.trim()] = c;
+    });
+
+    var existing = svg.querySelectorAll('line, path, text');
+    existing.forEach(function(el) { el.remove(); });
+
+    var cr = container.getBoundingClientRect();
+
+    pairs.forEach(function(p) {
+      var fromEl = map[p[0]];
+      var toEl = map[p[1]];
+      var label = p[2];
+      if (!fromEl || !toEl) return;
+
+      var fr = fromEl.getBoundingClientRect();
+      var tr = toEl.getBoundingClientRect();
+
+      var fx = fr.left - cr.left + fr.width / 2;
+      var fy = fr.top - cr.top + fr.height / 2;
+      var tx = tr.left - cr.left + tr.width / 2;
+      var ty = tr.top - cr.top + tr.height / 2;
+
+      // Smart edge selection: choose closest edge between the two cards
+      var fromCenter = { x: fx, y: fy };
+      var toCenter = { x: tx, y: ty };
+      var dx = toCenter.x - fromCenter.x;
+      var dy = toCenter.y - fromCenter.y;
+
+      // Pick exit edge from source
+      var absDx = Math.abs(dx);
+      var absDy = Math.abs(dy);
+      var fromEdge, toEdge;
+
+      if (absDx > absDy) {
+        // horizontal dominant
+        fromEdge = dx > 0 ? 'right' : 'left';
+        toEdge = dx > 0 ? 'left' : 'right';
+      } else {
+        // vertical dominant
+        fromEdge = dy > 0 ? 'bottom' : 'top';
+        toEdge = dy > 0 ? 'top' : 'bottom';
+      }
+
+      var x1 = fromCenter.x, y1 = fromCenter.y;
+      var x2 = toCenter.x, y2 = toCenter.y;
+
+      // Map from source center to the actual edge
+      var hw = fr.width / 2, hh = fr.height / 2;
+      var hw2 = tr.width / 2, hh2 = tr.height / 2;
+
+      if (fromEdge === 'right') { x1 = fr.left - cr.left + fr.width; y1 = fromCenter.y; }
+      else if (fromEdge === 'left') { x1 = fr.left - cr.left; y1 = fromCenter.y; }
+      else if (fromEdge === 'bottom') { x1 = fromCenter.x; y1 = fr.top - cr.top + fr.height; }
+      else if (fromEdge === 'top') { x1 = fromCenter.x; y1 = fr.top - cr.top; }
+
+      if (toEdge === 'right') { x2 = tr.left - cr.left + tr.width; y2 = toCenter.y; }
+      else if (toEdge === 'left') { x2 = tr.left - cr.left; y2 = toCenter.y; }
+      else if (toEdge === 'bottom') { x2 = toCenter.x; y2 = tr.top - cr.top + tr.height; }
+      else if (toEdge === 'top') { x2 = toCenter.x; y2 = tr.top - cr.top; }
+
+      // For same-edge route_routes ↔ driver/transport (both left edges)
+      if (p[0] === 'route_routes' && (p[1] === 'transport_transports' || p[1] === 'driver_drivers')) {
+        x1 = fr.left - cr.left; y1 = fr.top - cr.top + (p[1] === 'transport_transports' ? 30 : 50);
+        x2 = tr.left - cr.left; y2 = tr.top - cr.top + tr.height / 2;
+      }
+
+      // For customer → shipment: exit from bottom of customer
+      if (p[0] === 'customer_customers') {
+        x1 = fr.left - cr.left + fr.width / 2; y1 = fr.top - cr.top + fr.height;
+      }
+
+      // For warehouse → (products/route_stops/shipment): exit from bottom of warehouse
+      if (p[0] === 'warehouse_warehouses') {
+        x1 = fr.left - cr.left + fr.width / 2; y1 = fr.top - cr.top + fr.height;
+      }
+
+      // For shipment → route (left edge)
+      if (p[0] === 'shipment_shipments' && p[1] === 'route_routes') {
+        x1 = fr.left - cr.left; y1 = fr.top - cr.top + 70;
+        x2 = tr.left - cr.left + tr.width; y2 = tr.top - cr.top + 50;
+      }
+
+      // For shipment → items (bottom of shipment → top of items)
+      if (p[0] === 'shipment_shipments' && p[1] === 'shipment_items') {
+        x1 = fr.left - cr.left + fr.width / 2; y1 = fr.top - cr.top + fr.height;
+        x2 = tr.left - cr.left + tr.width / 2; y2 = tr.top - cr.top;
+      }
+
+      // For products → items (right of products → left of items)
+      if (p[0] === 'products_products' && p[1] === 'shipment_items') {
+        x1 = fr.left - cr.left + fr.width; y1 = fr.top - cr.top + fr.height / 2;
+        x2 = tr.left - cr.left; y2 = tr.top - cr.top + fr.height / 2;
+      }
+
+      // For route → route_stops
+      if (p[0] === 'route_routes' && p[1] === 'route_stops') {
+        x1 = fr.left - cr.left + fr.width; y1 = fr.top - cr.top + 70;
+        x2 = tr.left - cr.left; y2 = tr.top - cr.top + 50;
+      }
+
+      var cx1 = x1 + (x2 - x1) * 0.4;
+      var cx2 = x1 + (x2 - x1) * 0.6;
+      var cy1 = y1;
+      var cy2 = y2;
+
+      // Curve for vertical dominant
+      if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
+        var midY = (y1 + y2) / 2;
+        cy1 = midY;
+        cy2 = midY;
+      }
+
+      var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      var d = 'M ' + x1 + ',' + y1 +
+              ' C ' + cx1 + ',' + cy1 +
+                ' ' + cx2 + ',' + cy2 +
+                ' ' + x2 + ',' + y2;
+      path.setAttribute('d', d);
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', '#f778ba');
+      path.setAttribute('stroke-width', '1.8');
+      path.setAttribute('stroke-dasharray', '6,4');
+      path.setAttribute('opacity', '0.65');
+      path.setAttribute('marker-end', 'url(#arr)');
+      svg.appendChild(path);
+
+      var labelEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      var lx = (x1 + x2) / 2;
+      var ly = (y1 + y2) / 2 - 8;
+      if (Math.abs(y2 - y1) > Math.abs(x2 - x1)) {
+        lx = (x1 + x2) / 2 + 12;
+        ly = (y1 + y2) / 2;
+      }
+      labelEl.setAttribute('x', lx);
+      labelEl.setAttribute('y', ly);
+      labelEl.setAttribute('text-anchor', 'middle');
+      labelEl.setAttribute('fill', '#f778ba');
+      labelEl.setAttribute('font-size', '10');
+      labelEl.setAttribute('font-weight', '600');
+      labelEl.setAttribute('font-family', 'Consolas, monospace');
+      labelEl.textContent = label;
+      svg.appendChild(labelEl);
+    });
+  }
+
+  // Drag & Drop
+  var cards = container.querySelectorAll('.table-card');
+  var initialPositions = {};
+  cards.forEach(function(c) {
+    var key = c.querySelector('.header .label').textContent.trim();
+    initialPositions[key] = { top: parseInt(c.style.top), left: parseInt(c.style.left) };
+  });
+
+  var dragState = null;
+
+  function onDragStart(e) {
+    var card = e.currentTarget;
+    var rect = card.getBoundingClientRect();
+    var cr2 = container.getBoundingClientRect();
+    var clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    var clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    if (clientX == null) return;
+
+    dragState = {
+      card: card,
+      offsetX: clientX - rect.left,
+      offsetY: clientY - rect.top,
+      startLeft: parseInt(card.style.left),
+      startTop: parseInt(card.style.top),
+    };
+    card.classList.add('dragging');
+    e.preventDefault();
+  }
+
+  function onDragMove(e) {
+    if (!dragState) return;
+    var clientX = e.clientX || (e.touches && e.touches[0].clientX);
+    var clientY = e.clientY || (e.touches && e.touches[0].clientY);
+    if (clientX == null) return;
+
+    var cr3 = container.getBoundingClientRect();
+    var newLeft = clientX - cr3.left - dragState.offsetX;
+    var newTop = clientY - cr3.top - dragState.offsetY;
+    newLeft = Math.max(0, newLeft);
+    newTop = Math.max(0, newTop);
+
+    dragState.card.style.left = newLeft + 'px';
+    dragState.card.style.top = newTop + 'px';
+    drawLines();
+    e.preventDefault();
+  }
+
+  function onDragEnd() {
+    if (!dragState) return;
+    dragState.card.classList.remove('dragging');
+    dragState = null;
+  }
+
+  cards.forEach(function(c) {
+    c.addEventListener('mousedown', onDragStart);
+    c.addEventListener('touchstart', onDragStart, { passive: false });
+  });
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('touchmove', onDragMove, { passive: false });
+  document.addEventListener('mouseup', onDragEnd);
+  document.addEventListener('touchend', onDragEnd);
+
+  // Reset
+  document.getElementById('btnReset').addEventListener('click', function() {
+    cards.forEach(function(c) {
+      var key = c.querySelector('.header .label').textContent.trim();
+      var pos = initialPositions[key];
+      if (pos) {
+        c.style.top = pos.top + 'px';
+        c.style.left = pos.left + 'px';
+      }
+    });
+    drawLines();
+  });
+
+  window.addEventListener('load', function() { setTimeout(drawLines, 100); });
+  window.addEventListener('resize', drawLines);
+})();
+</script>
+
+</body>
+</html>

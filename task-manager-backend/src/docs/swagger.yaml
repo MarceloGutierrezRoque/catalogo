@@ -1,0 +1,331 @@
+openapi: 3.0.3
+info:
+  title: Task Manager API
+  description: API para gestionar tareas con autenticación de usuarios
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+    description: Servidor local
+tags:
+  - name: Users
+    description: Endpoints de autenticación y gestión de usuarios
+  - name: Tasks
+    description: Endpoints de tareas (requieren autenticación)
+paths:
+  /:
+    get:
+      tags:
+        - Root
+      summary: Verifica que la API está funcionando
+      responses:
+        '200':
+          description: Respuesta exitosa
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  version:
+                    type: string
+  /api/users/register:
+    post:
+      tags:
+        - Users
+      summary: Registra un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - lastname
+                - email
+                - password
+              properties:
+                name:
+                  type: string
+                  description: Nombre del usuario
+                lastname:
+                  type: string
+                  description: Apellido del usuario
+                email:
+                  type: string
+                  format: email
+                  description: Correo electrónico
+                password:
+                  type: string
+                  format: password
+                  description: Contraseña
+      responses:
+        '201':
+          description: Usuario registrado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          description: Error de validación o email ya existe
+  /api/users/login:
+    post:
+      tags:
+        - Users
+      summary: Inicia sesión con email y password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  description: Correo electrónico
+                password:
+                  type: string
+                  format: password
+                  description: Contraseña
+      responses:
+        '200':
+          description: Login exitoso
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          description: Credenciales inválidas
+  /api/users/profile:
+    get:
+      tags:
+        - Users
+      summary: Obtiene el perfil del usuario autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Perfil del usuario
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          description: No autorizado
+  /api/tasks:
+    get:
+      tags:
+        - Tasks
+      summary: Obtiene todas las tareas del usuario autenticado
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Lista de tareas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      tags:
+        - Tasks
+      summary: Crea una nueva tarea
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+              properties:
+                title:
+                  type: string
+                  description: Título de la tarea
+                description:
+                  type: string
+                  description: Descripción de la tarea
+      responses:
+        '201':
+          description: Tarea creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: Error de validación
+        '401':
+          description: No autorizado
+  /api/tasks/{id}:
+    get:
+      tags:
+        - Tasks
+      summary: Obtiene una tarea por ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID de la tarea
+      responses:
+        '200':
+          description: Tarea encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Tarea no encontrada
+        '401':
+          description: No autorizado
+    put:
+      tags:
+        - Tasks
+      summary: Actualiza una tarea
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID de la tarea
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: Título de la tarea
+                description:
+                  type: string
+                  description: Descripción de la tarea
+                completed:
+                  type: boolean
+                  description: Estado de completada
+      responses:
+        '200':
+          description: Tarea actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Tarea no encontrada
+        '401':
+          description: No autorizado
+    delete:
+      tags:
+        - Tasks
+      summary: Elimina una tarea
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: UUID de la tarea
+      responses:
+        '204':
+          description: Tarea eliminada
+        '404':
+          description: Tarea no encontrada
+        '401':
+          description: No autorizado
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único del usuario
+        name:
+          type: string
+          description: Nombre del usuario
+        lastname:
+          type: string
+          description: Apellido del usuario
+        email:
+          type: string
+          format: email
+          description: Correo electrónico
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha de creación
+    AuthResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único del usuario
+        name:
+          type: string
+          description: Nombre del usuario
+        lastname:
+          type: string
+          description: Apellido del usuario
+        email:
+          type: string
+          format: email
+          description: Correo electrónico
+        token:
+          type: string
+          description: Token de autenticación
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: ID único de la tarea
+        title:
+          type: string
+          description: Título de la tarea
+        description:
+          type: string
+          description: Descripción de la tarea
+        completed:
+          type: boolean
+          description: Estado de completada
+        createdAt:
+          type: string
+          format: date-time
+          description: Fecha de creación
+        updatedAt:
+          type: string
+          format: date-time
+          description: Fecha de última actualización
+        userId:
+          type: string
+          format: uuid
+          description: ID del usuario propietario
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: token
