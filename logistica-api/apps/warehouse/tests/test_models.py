@@ -100,8 +100,8 @@ class WarehouseModelTests(TestCase):
         warehouse_id = self.warehouse.pk
         self.warehouse.is_active = False
         self.warehouse.save()
-        self.assertIsNotNone(Warehouse.objects.get(pk=warehouse_id))
-        self.assertFalse(Warehouse.objects.get(pk=warehouse_id).is_active)
+        self.assertIsNotNone(Warehouse.all_objects.get(pk=warehouse_id))
+        self.assertFalse(Warehouse.all_objects.get(pk=warehouse_id).is_active)
 
     def test_capacity_zero(self):
         """capacity=0 is valid."""

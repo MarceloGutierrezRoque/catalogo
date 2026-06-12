@@ -3,12 +3,10 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from django.utils import timezone
 from datetime import timedelta
-import jwt
-from django.conf import settings
 
 
 class AuthTests(APITestCase):
-    """Tests for JWT authentication endpoints (/api/token/ and /api/token/refresh/)."""
+    """Tests for JWT authentication endpoints (/api/auth/login/ and /api/auth/refresh/)."""
 
     def setUp(self):
         self.client = APIClient()
@@ -31,25 +29,27 @@ class AuthTests(APITestCase):
 
     def test_login_success(self):
         """Valid credentials return 200 with access and refresh tokens."""
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'testuser',
             'password': self.password,
         }, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn('access', response.data)
         self.assertIn('refresh', response.data)
+        self.assertIn('user', response.data)
+        self.assertIn('permissions', response.data['user'])
         self.assertIsInstance(response.data['access'], str)
         self.assertIsInstance(response.data['refresh'], str)
 
     def test_refresh_token_success(self):
         """Valid refresh token returns 200 with new access token."""
-        login_resp = self.client.post('/api/token/', {
+        login_resp = self.client.post('/api/auth/login/', {
             'username': 'testuser',
             'password': self.password,
         }, format='json')
         refresh_token = login_resp.data['refresh']
 
-        response = self.client.post('/api/token/refresh/', {
+        response = self.client.post('/api/auth/refresh/', {
             'refresh': refresh_token,
         }, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -59,7 +59,7 @@ class AuthTests(APITestCase):
 
     def test_access_protected_endpoint_with_valid_token(self):
         """Valid Bearer token grants access to a protected endpoint."""
-        login_resp = self.client.post('/api/token/', {
+        login_resp = self.client.post('/api/auth/login/', {
             'username': 'testuser',
             'password': self.password,
         }, format='json')
@@ -76,7 +76,7 @@ class AuthTests(APITestCase):
 
     def test_login_invalid_credentials(self):
         """Wrong password returns 401."""
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'testuser',
             'password': 'wrongpassword',
         }, format='json')
@@ -84,7 +84,7 @@ class AuthTests(APITestCase):
 
     def test_login_inactive_user(self):
         """Inactive user cannot obtain tokens — returns 401."""
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'inactiveuser',
             'password': self.password,
         }, format='json')
@@ -92,7 +92,7 @@ class AuthTests(APITestCase):
 
     def test_login_nonexistent_user(self):
         """Non-existent username returns 401."""
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'ghost',
             'password': 'anything',
         }, format='json')
@@ -100,7 +100,7 @@ class AuthTests(APITestCase):
 
     def test_refresh_token_invalid(self):
         """Malformed refresh token returns 401."""
-        response = self.client.post('/api/token/refresh/', {
+        response = self.client.post('/api/auth/refresh/', {
             'refresh': 'not-a-valid-token',
         }, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -113,7 +113,7 @@ class AuthTests(APITestCase):
         # Manually set exp to 1 second ago
         refresh.set_exp(lifetime=timedelta(seconds=-1))
 
-        response = self.client.post('/api/token/refresh/', {
+        response = self.client.post('/api/auth/refresh/', {
             'refresh': str(refresh),
         }, format='json')
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
@@ -135,22 +135,22 @@ class AuthTests(APITestCase):
 
     def test_login_missing_fields(self):
         """Missing username or password returns 400."""
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'testuser',
         }, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'password': self.password,
         }, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        response = self.client.post('/api/token/', {}, format='json')
+        response = self.client.post('/api/auth/login/', {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_refresh_missing_field(self):
         """Missing refresh field returns 400."""
-        response = self.client.post('/api/token/refresh/', {}, format='json')
+        response = self.client.post('/api/auth/refresh/', {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_access_with_expired_token(self):
@@ -165,7 +165,7 @@ class AuthTests(APITestCase):
 
     def test_login_with_extra_fields(self):
         """Extra fields in login payload are ignored (still succeeds)."""
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'testuser',
             'password': self.password,
             'extra_field': 'should_be_ignored',

@@ -92,8 +92,8 @@ class SupplierModelTests(TestCase):
         supplier_id = self.supplier.pk
         self.supplier.is_active = False
         self.supplier.save()
-        self.assertIsNotNone(Supplier.objects.get(pk=supplier_id))
-        self.assertFalse(Supplier.objects.get(pk=supplier_id).is_active)
+        self.assertIsNotNone(Supplier.all_objects.get(pk=supplier_id))
+        self.assertFalse(Supplier.all_objects.get(pk=supplier_id).is_active)
 
     def test_blank_email_field(self):
         """Empty string for email is accepted (blank=True)."""

@@ -12,10 +12,10 @@ class RouteViewSetTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.auth_user = User.objects.create_user(
+        self.auth_user = User.objects.create_superuser(
             username='testuser', password='testpass123'
         )
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'testuser', 'password': 'testpass123'
         }, format='json')
         self.token = response.data['access']
@@ -162,10 +162,10 @@ class StopViewSetTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.auth_user = User.objects.create_user(
+        self.auth_user = User.objects.create_superuser(
             username='testuser2', password='testpass123'
         )
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'testuser2', 'password': 'testpass123'
         }, format='json')
         self.token = response.data['access']

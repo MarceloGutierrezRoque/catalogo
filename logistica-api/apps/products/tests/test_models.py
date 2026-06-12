@@ -179,20 +179,20 @@ class ProductModelTests(TestCase):
         product_id = self.product.pk
         self.product.is_active = False
         self.product.save()
-        self.assertIsNotNone(Product.objects.get(pk=product_id))
-        self.assertFalse(Product.objects.get(pk=product_id).is_active)
+        self.assertIsNotNone(Product.all_objects.get(pk=product_id))
+        self.assertFalse(Product.all_objects.get(pk=product_id).is_active)
 
     def test_supplier_on_delete_protect(self):
         """Deleting a Supplier with Product raises ProtectedError."""
         from django.db.models import ProtectedError
         with self.assertRaises(ProtectedError):
-            self.supplier.delete()
+            self.supplier.hard_delete()
 
     def test_warehouse_on_delete_protect(self):
         """Deleting a Warehouse with Product raises ProtectedError."""
         from django.db.models import ProtectedError
         with self.assertRaises(ProtectedError):
-            self.warehouse.delete()
+            self.warehouse.hard_delete()
 
     def test_zero_stock(self):
         """stock_quantity=0 is valid."""

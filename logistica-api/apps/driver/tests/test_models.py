@@ -117,8 +117,8 @@ class DriverModelTests(TestCase):
         driver_id = self.driver.pk
         self.driver.is_active = False
         self.driver.save()
-        self.assertIsNotNone(Driver.objects.get(pk=driver_id))
-        self.assertFalse(Driver.objects.get(pk=driver_id).is_active)
+        self.assertIsNotNone(Driver.all_objects.get(pk=driver_id))
+        self.assertFalse(Driver.all_objects.get(pk=driver_id).is_active)
 
     def test_user_on_delete_protect(self):
         """Deleting a User with Driver raises ProtectedError."""

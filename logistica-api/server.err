@@ -1,0 +1,45 @@
+Unauthorized: /api/auth/login/
+[08/Jun/2026 22:18:57] "POST /api/auth/login/ HTTP/1.1" 401 63
+[08/Jun/2026 22:18:57,135] - Broken pipe from ('127.0.0.1', 50280)
+[08/Jun/2026 22:41:31] "POST /api/auth/login/ HTTP/1.1" 200 639
+[08/Jun/2026 22:41:33,199] - Broken pipe from ('127.0.0.1', 53882)
+[08/Jun/2026 22:41:34] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[08/Jun/2026 22:41:34] "POST /api/auth/login/ HTTP/1.1" 200 639
+[08/Jun/2026 22:41:34] "OPTIONS /api/shipments/ HTTP/1.1" 200 0
+[08/Jun/2026 22:41:34] "OPTIONS /api/routes/ HTTP/1.1" 200 0
+[08/Jun/2026 22:41:34] "OPTIONS /api/products/ HTTP/1.1" 200 0
+[08/Jun/2026 22:41:34] "OPTIONS /api/warehouses/ HTTP/1.1" 200 0
+[08/Jun/2026 22:41:34] "OPTIONS /api/transports/ HTTP/1.1" 200 0
+[08/Jun/2026 22:41:34] "GET /api/routes/ HTTP/1.1" 200 414
+[08/Jun/2026 22:41:34] "GET /api/shipments/ HTTP/1.1" 200 496
+[08/Jun/2026 22:41:35] "GET /api/products/ HTTP/1.1" 200 321
+[08/Jun/2026 22:41:35] "GET /api/warehouses/ HTTP/1.1" 200 430
+[08/Jun/2026 22:41:35] "GET /api/transports/ HTTP/1.1" 200 261
+[08/Jun/2026 22:41:35] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/login/
+[08/Jun/2026 22:41:36] "POST /api/auth/login/ HTTP/1.1" 401 63
+[08/Jun/2026 22:41:36] "OPTIONS /api/auth/refresh/ HTTP/1.1" 200 0
+[08/Jun/2026 22:41:36] "POST /api/auth/refresh/ HTTP/1.1" 200 244
+Unauthorized: /api/auth/login/
+[08/Jun/2026 22:41:36] "POST /api/auth/login/ HTTP/1.1" 401 63
+[08/Jun/2026 22:42:43] "POST /api/auth/login/ HTTP/1.1" 200 639
+[08/Jun/2026 22:42:44,080] - Broken pipe from ('127.0.0.1', 54161)
+[08/Jun/2026 22:42:45] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+[08/Jun/2026 22:42:45] "POST /api/auth/login/ HTTP/1.1" 200 639
+[08/Jun/2026 22:42:45] "OPTIONS /api/shipments/ HTTP/1.1" 200 0
+[08/Jun/2026 22:42:45] "OPTIONS /api/routes/ HTTP/1.1" 200 0
+[08/Jun/2026 22:42:45] "OPTIONS /api/products/ HTTP/1.1" 200 0
+[08/Jun/2026 22:42:45] "OPTIONS /api/warehouses/ HTTP/1.1" 200 0
+[08/Jun/2026 22:42:45] "OPTIONS /api/transports/ HTTP/1.1" 200 0
+[08/Jun/2026 22:42:45] "GET /api/routes/ HTTP/1.1" 200 414
+[08/Jun/2026 22:42:45] "GET /api/shipments/ HTTP/1.1" 200 496
+[08/Jun/2026 22:42:45] "GET /api/products/ HTTP/1.1" 200 321
+[08/Jun/2026 22:42:45] "GET /api/warehouses/ HTTP/1.1" 200 430
+[08/Jun/2026 22:42:45] "GET /api/transports/ HTTP/1.1" 200 261
+[08/Jun/2026 22:42:46] "OPTIONS /api/auth/login/ HTTP/1.1" 200 0
+Unauthorized: /api/auth/login/
+[08/Jun/2026 22:42:47] "POST /api/auth/login/ HTTP/1.1" 401 63
+[08/Jun/2026 22:42:47] "OPTIONS /api/auth/refresh/ HTTP/1.1" 200 0
+[08/Jun/2026 22:42:47] "POST /api/auth/refresh/ HTTP/1.1" 200 244
+Unauthorized: /api/auth/login/
+[08/Jun/2026 22:42:47] "POST /api/auth/login/ HTTP/1.1" 401 63

@@ -100,8 +100,8 @@ class TransportModelTests(TestCase):
         transport_id = self.transport.pk
         self.transport.is_active = False
         self.transport.save()
-        self.assertIsNotNone(Transport.objects.get(pk=transport_id))
-        self.assertFalse(Transport.objects.get(pk=transport_id).is_active)
+        self.assertIsNotNone(Transport.all_objects.get(pk=transport_id))
+        self.assertFalse(Transport.all_objects.get(pk=transport_id).is_active)
 
     def test_is_available_false(self):
         """is_available=False is accepted."""

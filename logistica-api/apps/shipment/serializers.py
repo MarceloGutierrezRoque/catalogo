@@ -6,7 +6,7 @@ class ShipmentItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShipmentItem
         fields = '__all__'
-        read_only_fields = ['id']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class ShipmentSerializer(serializers.ModelSerializer):

@@ -114,8 +114,8 @@ class RouteModelTests(TestCase):
         route_id = self.route.pk
         self.route.is_active = False
         self.route.save()
-        self.assertIsNotNone(Route.objects.get(pk=route_id))
-        self.assertFalse(Route.objects.get(pk=route_id).is_active)
+        self.assertIsNotNone(Route.all_objects.get(pk=route_id))
+        self.assertFalse(Route.all_objects.get(pk=route_id).is_active)
 
     def test_status_choices_all_valid(self):
         """All status choices are accepted."""
@@ -144,13 +144,13 @@ class RouteModelTests(TestCase):
         """Deleting Transport with Route raises ProtectedError."""
         from django.db.models import ProtectedError
         with self.assertRaises(ProtectedError):
-            self.transport.delete()
+            self.transport.hard_delete()
 
     def test_driver_on_delete_protect(self):
         """Deleting Driver with Route raises ProtectedError."""
         from django.db.models import ProtectedError
         with self.assertRaises(ProtectedError):
-            self.driver.delete()
+            self.driver.hard_delete()
 
 
 class StopModelTests(TestCase):
@@ -252,7 +252,7 @@ class StopModelTests(TestCase):
     def test_route_cascade_delete(self):
         """Deleting Route cascades to delete its Stops."""
         stop_id = self.stop.pk
-        self.route.delete()
+        self.route.hard_delete()
         self.assertFalse(Stop.objects.filter(pk=stop_id).exists())
 
     def test_status_choices_all_valid(self):
@@ -282,7 +282,7 @@ class StopModelTests(TestCase):
         """Deleting Warehouse with Stop raises ProtectedError."""
         from django.db.models import ProtectedError
         with self.assertRaises(ProtectedError):
-            self.warehouse.delete()
+            self.warehouse.hard_delete()
 
     def test_multiple_stops_same_order_on_different_routes(self):
         """Same order number allowed on different routes."""

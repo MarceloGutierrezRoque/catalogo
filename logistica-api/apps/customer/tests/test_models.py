@@ -107,8 +107,8 @@ class CustomerModelTests(TestCase):
         customer_id = self.customer.pk
         self.customer.is_active = False
         self.customer.save()
-        self.assertIsNotNone(Customer.objects.get(pk=customer_id))
-        self.assertFalse(Customer.objects.get(pk=customer_id).is_active)
+        self.assertIsNotNone(Customer.all_objects.get(pk=customer_id))
+        self.assertFalse(Customer.all_objects.get(pk=customer_id).is_active)
 
     def test_invalid_email_format(self):
         """Invalid email string IS stored (no model-level validation)."""

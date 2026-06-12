@@ -9,10 +9,10 @@ class WarehouseViewSetTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(
+        self.user = User.objects.create_superuser(
             username='testuser', password='testpass123'
         )
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'testuser', 'password': 'testpass123'
         }, format='json')
         self.token = response.data['access']
@@ -169,15 +169,14 @@ class WarehouseViewSetTests(APITestCase):
         """After soft-delete, list does NOT include it by default."""
         self.client.delete(f'/api/warehouses/{self.warehouse.pk}/')
         response = self.client.get('/api/warehouses/')
-        # The queryset is Warehouse.objects.all(), so it still shows
-        # soft-deleted records. Let's verify is_active=False appears.
-        self.assertEqual(len(response.data), 1)
-        self.assertFalse(response.data[0]['is_active'])
+        self.assertEqual(len(response.data), 0)
 
     def test_create_and_retrieve_after_delete(self):
         """Create a new warehouse after soft-deleting one."""
         self.client.delete(f'/api/warehouses/{self.warehouse.pk}/')
         response = self.client.post('/api/warehouses/', self.valid_payload, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        # Both exist in DB
-        self.assertEqual(Warehouse.objects.count(), 2)
+        # Only the active one is counted by default
+        self.assertEqual(Warehouse.objects.count(), 1)
+        # Both exist in DB (including soft-deleted)
+        self.assertEqual(Warehouse.all_objects.count(), 2)

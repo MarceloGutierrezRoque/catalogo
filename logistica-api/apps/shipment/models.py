@@ -47,7 +47,7 @@ class Shipment(BaseModel):
         return self.tracking_number
 
 
-class ShipmentItem(models.Model):
+class ShipmentItem(BaseModel):
     shipment = models.ForeignKey(
         Shipment,
         on_delete=models.CASCADE,

@@ -9,10 +9,10 @@ class SupplierViewSetTests(APITestCase):
 
     def setUp(self):
         self.client = APIClient()
-        self.user = User.objects.create_user(
+        self.user = User.objects.create_superuser(
             username='testuser', password='testpass123'
         )
-        response = self.client.post('/api/token/', {
+        response = self.client.post('/api/auth/login/', {
             'username': 'testuser', 'password': 'testpass123'
         }, format='json')
         self.token = response.data['access']

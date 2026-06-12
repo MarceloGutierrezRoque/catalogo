@@ -136,8 +136,8 @@ class ShipmentModelTests(TestCase):
         shipment_id = self.shipment.pk
         self.shipment.is_active = False
         self.shipment.save()
-        self.assertIsNotNone(Shipment.objects.get(pk=shipment_id))
-        self.assertFalse(Shipment.objects.get(pk=shipment_id).is_active)
+        self.assertIsNotNone(Shipment.all_objects.get(pk=shipment_id))
+        self.assertFalse(Shipment.all_objects.get(pk=shipment_id).is_active)
 
     def test_status_choices_all_valid(self):
         """All status choices are accepted."""
@@ -182,13 +182,13 @@ class ShipmentModelTests(TestCase):
         """Deleting Customer with Shipment raises ProtectedError."""
         from django.db.models import ProtectedError
         with self.assertRaises(ProtectedError):
-            self.customer.delete()
+            self.customer.hard_delete()
 
     def test_warehouse_on_delete_protect(self):
         """Deleting Warehouse with Shipment raises ProtectedError."""
         from django.db.models import ProtectedError
         with self.assertRaises(ProtectedError):
-            self.warehouse.delete()
+            self.warehouse.hard_delete()
 
     def test_route_nullable_on_delete_set_null(self):
         """Deleting Route sets shipment.route to null."""
@@ -207,7 +207,7 @@ class ShipmentModelTests(TestCase):
         )
         self.shipment.route = route
         self.shipment.save()
-        route.delete()
+        route.hard_delete()
         self.shipment.refresh_from_db()
         self.assertIsNone(self.shipment.route)
 
@@ -262,14 +262,14 @@ class ShipmentItemModelTests(TestCase):
     def test_shipment_cascade_delete(self):
         """Deleting Shipment cascades to delete its Items."""
         item_id = self.item.pk
-        self.shipment.delete()
+        self.shipment.hard_delete()
         self.assertFalse(ShipmentItem.objects.filter(pk=item_id).exists())
 
     def test_product_on_delete_protect(self):
         """Deleting Product with ShipmentItem raises ProtectedError."""
         from django.db.models import ProtectedError
         with self.assertRaises(ProtectedError):
-            self.product.delete()
+            self.product.hard_delete()
 
     def test_quantity_zero(self):
         """quantity=0 is accepted."""

@@ -35,7 +35,7 @@ class Route(BaseModel):
         return self.name
 
 
-class Stop(models.Model):
+class Stop(BaseModel):
     route = models.ForeignKey(
         Route,
         on_delete=models.CASCADE,
