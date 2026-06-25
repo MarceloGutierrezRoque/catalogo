@@ -12,3 +12,6 @@ python-decouple==3.8
 sqlparse==0.5.5
 tzdata==2026.2
 coverage==7.14.1
+
+
+#production
