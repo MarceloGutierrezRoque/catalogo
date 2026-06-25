@@ -8,6 +8,7 @@ import { ShoppingCart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useCartStore } from "@/stores/cart";
 import type { Plushie } from "@/types/api";
+import { getImageUrl } from "@/lib/constants";
 
 interface PlushieCardProps {
   plushie: Plushie;
@@ -17,7 +18,7 @@ const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "51999888777"
 
 export function PlushieCard({ plushie }: PlushieCardProps) {
   const addItem = useCartStore((s) => s.addItem);
-  const imageUrl = plushie.image || "/placeholder-plushie.svg";
+  const imageUrl = getImageUrl(plushie.image);
   const isOutOfStock = plushie.stock === 0;
 
   const handleAddToCart = (e: React.MouseEvent) => {

@@ -42,6 +42,7 @@ import { useAdminPlushies } from "@/hooks/use-admin-plushies";
 import { useDeleteAdminPlushie, useActivateAdminPlushie, useDeactivateAdminPlushie } from "@/hooks/use-admin-plushies";
 import { DeleteDialog } from "@/components/plushies/admin/delete-dialog";
 import type { Plushie } from "@/types/api";
+import { getImageUrl } from "@/lib/constants";
 
 const columnHelper = createColumnHelper<Plushie>();
 
@@ -70,7 +71,7 @@ export function AdminPlushiesTable() {
               {imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={imageUrl}
+                  src={getImageUrl(imageUrl)}
                   alt=""
                   className="h-full w-full object-cover"
                 />

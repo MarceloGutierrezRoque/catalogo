@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, AlertCircle, RefreshCw, ShoppingCart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { useCartStore } from "@/stores/cart";
+import { getImageUrl } from "@/lib/constants";
 
 interface PlushieDetailProps {
   id: number;
@@ -68,7 +69,7 @@ export function PlushieDetail({ id }: PlushieDetailProps) {
 
   if (!plushie) return null;
 
-  const imageUrl = plushie.image || "/placeholder-plushie.svg";
+  const imageUrl = getImageUrl(plushie.image);
   const isOutOfStock = plushie.stock === 0;
 
   return (
