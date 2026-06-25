@@ -138,7 +138,10 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # CORS
-CORS_ALLOW_ALL_ORIGINS = True  # Dev only — restrict in production
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000", 
+    "https://catalogo-front-six.vercel.app"
+]
 
 # REST Framework
 REST_FRAMEWORK = {
