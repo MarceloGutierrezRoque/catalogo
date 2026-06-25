@@ -4,6 +4,7 @@ export const API_BASE_URL =
 export function getImageUrl(path: string | null | undefined): string {
   if (!path) return "/placeholder-plushie.svg";
   if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  if (path.startsWith("/")) return `${API_BASE_URL}${path}`;
-  return path;
+  const cleanPath = path.replace(/_[A-Za-z0-9]{7}(?=\.[\w]+$)/g, "");
+  if (cleanPath.startsWith("/")) return `${API_BASE_URL}${cleanPath}`;
+  return cleanPath;
 }
