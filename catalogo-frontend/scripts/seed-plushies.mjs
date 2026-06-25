@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API = "http://localhost:8000";
+const API = process.env.API_BASE_URL || "http://localhost:8000";
 let token = null;
 
 async function login() {

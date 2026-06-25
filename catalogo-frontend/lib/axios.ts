@@ -1,7 +1,8 @@
 import axios from "axios";
+import { API_BASE_URL } from "./constants";
 
 const api = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -31,7 +32,7 @@ api.interceptors.response.use(
           const parsed = JSON.parse(tokens);
           const refresh = parsed?.state?.refreshToken;
           if (refresh) {
-            const { data } = await axios.post("http://localhost:8000/api/token/refresh/", {
+            const { data } = await axios.post(`${API_BASE_URL}/api/token/refresh/`, {
               refresh,
             });
             const current = JSON.parse(localStorage.getItem("auth-storage")!);
