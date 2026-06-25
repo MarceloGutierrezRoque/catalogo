@@ -106,6 +106,7 @@ export default function CartPage() {
                           id={`qty-${item.plushie_id}`}
                           type="number"
                           min={1}
+                          max={1000}
                           value={item.quantity}
                           onChange={(e) => {
                             const val = parseInt(e.target.value, 10);

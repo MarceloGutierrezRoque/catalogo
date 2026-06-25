@@ -30,7 +30,7 @@ export const useCartStore = create<CartState>()(
           set({
             items: items.map((i) =>
               i.plushie_id === item.plushie_id
-                ? { ...i, quantity: i.quantity + (item.quantity ?? 1) }
+                ? { ...i, quantity: Math.min(i.quantity + (item.quantity ?? 1), 1000) }
                 : i
             ),
           });
@@ -53,7 +53,7 @@ export const useCartStore = create<CartState>()(
         set({
           items: get().items.map((i) =>
             i.plushie_id === plushieId
-              ? { ...i, quantity }
+              ? { ...i, quantity: Math.min(quantity, 1000) }
               : i
           ),
         });
