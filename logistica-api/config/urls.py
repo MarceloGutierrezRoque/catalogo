@@ -32,4 +32,5 @@ urlpatterns = [
     path('api/', include('apps.driver.urls')),
     path('api/', include('apps.transport.urls')),
     path('api/', include('apps.route.urls')),
+    path('api/', include('apps.payments.urls')),
 ]

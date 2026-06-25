@@ -29,6 +29,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',')
 
+if DEBUG:
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '[::1]'])
+
 RAILWAY_DOMAIN = config('RAILWAY_PUBLIC_DOMAIN', default='')
 if RAILWAY_DOMAIN:
     ALLOWED_HOSTS.append(RAILWAY_DOMAIN)
@@ -57,6 +60,7 @@ INSTALLED_APPS = [
     'apps.driver',
     'apps.transport',
     'apps.route',
+    'apps.payments',
 ]
 
 MIDDLEWARE = [
@@ -147,7 +151,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+    "http://localhost:3000", 
+    "https://logistica-frontend-orcin.vercel.app"
 ]
 
 SPECTACULAR_SETTINGS = {
@@ -166,5 +171,11 @@ STORAGES = {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
 }
+
+# Stripe settings
+STRIPE_SECRET_KEY = config('STRIPE_SECRET_KEY', default='')
+STRIPE_WEBHOOK_SECRET = config('STRIPE_WEBHOOK_SECRET', default='')
+PAYMENT_SUCCESS_URL = config('PAYMENT_SUCCESS_URL', default='')
+PAYMENT_CANCEL_URL = config('PAYMENT_CANCEL_URL', default='')
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')

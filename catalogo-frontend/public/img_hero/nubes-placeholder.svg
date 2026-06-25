@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" fill="none">
+  <!-- Nube grande izquierda -->
+  <g opacity="0.4">
+    <circle cx="200" cy="60" r="35" fill="oklch(0.5 0.02 50 / 0.15)"/>
+    <circle cx="240" cy="45" r="30" fill="oklch(0.5 0.02 50 / 0.12)"/>
+    <circle cx="280" cy="55" r="25" fill="oklch(0.5 0.02 50 / 0.1)"/>
+    <circle cx="160" cy="65" r="20" fill="oklch(0.5 0.02 50 / 0.08)"/>
+  </g>
+  <!-- Nube mediana centro -->
+  <g opacity="0.35">
+    <circle cx="680" cy="40" r="30" fill="oklch(0.5 0.02 50 / 0.15)"/>
+    <circle cx="720" cy="25" r="28" fill="oklch(0.5 0.02 50 / 0.12)"/>
+    <circle cx="760" cy="35" r="22" fill="oklch(0.5 0.02 50 / 0.1)"/>
+    <circle cx="640" cy="50" r="18" fill="oklch(0.5 0.02 50 / 0.08)"/>
+  </g>
+  <!-- Nube pequeña derecha -->
+  <g opacity="0.3">
+    <circle cx="1180" cy="55" r="25" fill="oklch(0.5 0.02 50 / 0.12)"/>
+    <circle cx="1210" cy="42" r="22" fill="oklch(0.5 0.02 50 / 0.1)"/>
+    <circle cx="1240" cy="50" r="18" fill="oklch(0.5 0.02 50 / 0.08)"/>
+  </g>
+  <!-- Nube extra izquierda baja -->
+  <g opacity="0.25">
+    <circle cx="100" cy="85" r="18" fill="oklch(0.5 0.02 50 / 0.1)"/>
+    <circle cx="130" cy="75" r="15" fill="oklch(0.5 0.02 50 / 0.08)"/>
+    <circle cx="70" cy="90" r="12" fill="oklch(0.5 0.02 50 / 0.06)"/>
+  </g>
+  <!-- Nube extra derecha baja -->
+  <g opacity="0.2">
+    <circle cx="1350" cy="80" r="22" fill="oklch(0.5 0.02 50 / 0.1)"/>
+    <circle cx="1380" cy="70" r="18" fill="oklch(0.5 0.02 50 / 0.08)"/>
+    <circle cx="1320" cy="85" r="14" fill="oklch(0.5 0.02 50 / 0.06)"/>
+  </g>
+</svg>

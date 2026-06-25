@@ -12,6 +12,7 @@ import {
   Package,
   Users,
   Ship,
+  ShoppingCart,
   UserCircle,
   Bus,
   MapPin,
@@ -34,6 +35,7 @@ const navItems = [
   { href: "/transports", label: "Vehículos", icon: Bus, permission: "transport.view_transport" },
   { href: "/routes", label: "Rutas", icon: MapPin, permission: "route.view_route" },
   { href: "/shipments", label: "Envíos", icon: Ship, permission: "shipment.view_shipment" },
+  { href: "/cart", label: "Carrito", icon: ShoppingCart, permission: null },
 ]
 
 export default function DashboardLayout({

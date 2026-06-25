@@ -199,6 +199,32 @@ export interface AuthTokens {
   refresh: string
 }
 
+export interface Payment {
+  id: number
+  product: number
+  stripe_session_id: string
+  stripe_payment_intent_id: string | null
+  amount: number
+  currency: string
+  status: "pending" | "completed" | "failed" | "refunded"
+  customer_email: string | null
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CheckoutSessionRequest {
+  items: { product_id: number; quantity?: number }[]
+  success_url: string
+  cancel_url: string
+  customer_email?: string
+}
+
+export interface CheckoutSessionResponse {
+  session_id: string
+  session_url: string
+}
+
 export interface PaginatedResponse<T> {
   count: number
   next: string | null

@@ -21,6 +21,8 @@ class Product(BaseModel):
         'warehouse.Warehouse',
         on_delete=models.PROTECT,
     )
+    stripe_product_id = models.CharField(max_length=255, blank=True, null=True)
+    stripe_price_id = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'products_products'

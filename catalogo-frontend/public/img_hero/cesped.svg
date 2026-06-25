@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 200" fill="none">
+  <path d="M0 160 Q180 80 360 120 T720 90 T1080 110 T1440 80 V200 H0 Z" fill="oklch(0.55 0.15 150 / 0.15)"/>
+  <path d="M0 180 Q240 100 480 140 T960 100 T1440 130 V200 H0 Z" fill="oklch(0.55 0.15 150 / 0.1)"/>
+  <path d="M0 190 Q200 140 400 160 T800 140 T1200 150 T1440 140 V200 H0 Z" fill="oklch(0.62 0.19 40 / 0.08)"/>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <!-- Cuerpo -->
+  <ellipse cx="100" cy="130" rx="50" ry="55" fill="oklch(0.62 0.19 40 / 0.2)" stroke="oklch(0.62 0.19 40 / 0.3)" stroke-width="2"/>
+  <!-- Cabeza -->
+  <circle cx="100" cy="72" r="38" fill="oklch(0.62 0.19 40 / 0.15)" stroke="oklch(0.62 0.19 40 / 0.3)" stroke-width="2"/>
+  <!-- Orejas -->
+  <circle cx="70" cy="42" r="14" fill="oklch(0.62 0.19 40 / 0.12)" stroke="oklch(0.62 0.19 40 / 0.25)" stroke-width="1.5"/>
+  <circle cx="130" cy="42" r="14" fill="oklch(0.62 0.19 40 / 0.12)" stroke="oklch(0.62 0.19 40 / 0.25)" stroke-width="1.5"/>
+  <!-- Ojos -->
+  <circle cx="87" cy="68" r="4" fill="oklch(0.62 0.19 40 / 0.4)"/>
+  <circle cx="113" cy="68" r="4" fill="oklch(0.62 0.19 40 / 0.4)"/>
+  <!-- Nariz -->
+  <ellipse cx="100" cy="78" rx="4" ry="3" fill="oklch(0.62 0.19 40 / 0.35)"/>
+  <!-- Boca -->
+  <path d="M95 82 Q100 88 105 82" stroke="oklch(0.62 0.19 40 / 0.3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- Brazos -->
+  <ellipse cx="52" cy="130" rx="14" ry="22" fill="oklch(0.62 0.19 40 / 0.12)" stroke="oklch(0.62 0.19 40 / 0.25)" stroke-width="1.5" transform="rotate(-15 52 130)"/>
+  <ellipse cx="148" cy="130" rx="14" ry="22" fill="oklch(0.62 0.19 40 / 0.12)" stroke="oklch(0.62 0.19 40 / 0.25)" stroke-width="1.5" transform="rotate(15 148 130)"/>
+  <!-- Patas -->
+  <ellipse cx="75" cy="180" rx="16" ry="12" fill="oklch(0.62 0.19 40 / 0.15)" stroke="oklch(0.62 0.19 40 / 0.25)" stroke-width="1.5"/>
+  <ellipse cx="125" cy="180" rx="16" ry="12" fill="oklch(0.62 0.19 40 / 0.15)" stroke="oklch(0.62 0.19 40 / 0.25)" stroke-width="1.5"/>
+  <!-- Corazón en el pecho -->
+  <path d="M94 125 Q94 118 100 118 Q106 118 106 125 Q106 132 100 138 Q94 132 94 125 Z" fill="oklch(0.78 0.14 55 / 0.4)"/>
+</svg>
