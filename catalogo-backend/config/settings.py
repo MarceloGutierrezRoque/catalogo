@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from decouple import config as env_config
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,9 +27,9 @@ SECRET_KEY = env_config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env_config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='').split(',') 
+ALLOWED_HOSTS = env_config('ALLOWED_HOSTS', default='').split(',') 
 
-RAILWAY_DOMAIN = config('RAILWAY_PUBLIC_DOMAIN', default='')
+RAILWAY_DOMAIN = env_config('RAILWAY_PUBLIC_DOMAIN', default='')
 if RAILWAY_DOMAIN:
     ALLOWED_HOSTS.append(RAILWAY_DOMAIN)
     CSRF_TRUSTED_ORIGINS = [f'https://{RAILWAY_DOMAIN}']
@@ -95,7 +96,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-     'default': dj_database_url.config(default=config('DATABASE_URL'))
+     'default': dj_database_url.config(default=env_config('DATABASE_URL'))
 }
 
 

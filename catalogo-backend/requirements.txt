@@ -12,6 +12,9 @@ python-decouple==3.8
 sqlparse==0.5.5
 tzdata==2026.2
 coverage==7.14.1
+dj-database-url==2.3.0
+gunicorn==23.0.0
+whitenoise==6.9.0
 
 
 #production
