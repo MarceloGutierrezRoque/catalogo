@@ -8,7 +8,6 @@ import {
   LayoutDashboard,
   ShoppingBag,
   Package,
-  Users,
   X,
 } from "lucide-react";
 
@@ -16,7 +15,6 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/dashboard/plushies", label: "Peluches", icon: Package },
   { href: "/dashboard/orders", label: "Pedidos", icon: ShoppingBag },
-  { href: "/dashboard/users", label: "Usuarios", icon: Users },
 ];
 
 interface SidebarProps {
