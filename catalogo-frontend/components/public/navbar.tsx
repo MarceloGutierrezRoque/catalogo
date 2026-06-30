@@ -12,7 +12,7 @@ import { useAuthStore } from "@/stores/auth";
 
 const navLinks = [
   { href: "/", label: "Inicio" },
-  { href: "/plushies", label: "Catálogo" },
+  { href: "/plushies", label: "Peluches" },
   { href: "#testimonios", label: "Proveedores" },
   { href: "#nosotros", label: "Nosotros" },
 ];
