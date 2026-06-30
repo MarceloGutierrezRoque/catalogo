@@ -17,7 +17,7 @@ const fredoka = Fredoka({
 });
 
 export const metadata: Metadata = {
-  title: "Catálogo de Peluches",
+  title: "Peluchel",
   description: "Los mejores peluches los encuentras aquí",
 };
 
