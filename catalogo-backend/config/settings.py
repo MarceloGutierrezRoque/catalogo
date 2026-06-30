@@ -140,7 +140,8 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # CORS
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000", 
-    "https://catalogo-front-six.vercel.app"
+    "https://catalogo-front-six.vercel.app",
+    "https://catalogo-frontend-git-master-mgutierrezroq-2118s-projects.vercel.app"
 ]
 
 # REST Framework
