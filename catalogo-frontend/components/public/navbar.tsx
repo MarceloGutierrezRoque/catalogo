@@ -35,7 +35,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between px-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-heading font-bold text-lg sm:text-xl tracking-tight">
-            Catálogo de Peluches
+            Peluchel
           </Link>
 
           <div className="flex items-center gap-2 sm:gap-4">

@@ -31,7 +31,7 @@ export function About() {
       <div className="relative container mx-auto px-4">
         <div className="text-center mb-14">
           <h2 className="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">
-            Sobre Catálogo de Peluches
+            Sobre Peluchel
           </h2>
           <p className="mt-3 text-muted-foreground max-w-2xl mx-auto">
             Somos una empresa dedicada a la venta de peluches de alta calidad. 

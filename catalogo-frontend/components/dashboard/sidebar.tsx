@@ -57,7 +57,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Logo / Title + close button */}
         <div className="flex h-14 items-center justify-between border-b border-border/60 px-4">
           <span className="font-heading font-bold tracking-tight">
-            Catálogo de Peluches
+            Peluchel
           </span>
           <Button
             variant="ghost"

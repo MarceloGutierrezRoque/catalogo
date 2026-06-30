@@ -63,7 +63,7 @@ export default function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-muted/30 p-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Catálogo de Peluches</CardTitle>
+          <CardTitle className="text-2xl">Peluchel</CardTitle>
           <CardDescription>Panel de administración</CardDescription>
         </CardHeader>
         <CardContent>

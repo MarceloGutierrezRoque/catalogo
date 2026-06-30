@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 
 const testimonials = [
   {
-    quote: "Trabajar con Catálogo de Peluches ha sido una experiencia increíble. Su atención al detalle y calidad superan nuestras expectativas. Entregas puntuales y comunicación impecable.",
+    quote: "Trabajar con Peluchel ha sido una experiencia increíble. Su atención al detalle y calidad superan nuestras expectativas. Entregas puntuales y comunicación impecable.",
     author: "María García",
     role: "Proveedora de Telas",
     company: "Textiles del Sur",
