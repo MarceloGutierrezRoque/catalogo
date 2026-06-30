@@ -4,13 +4,11 @@ import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, MessageCircle, MousePointerClick } from "lucide-react";
+import { ShoppingCart, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
 import { useCartStore } from "@/stores/cart";
 import type { Plushie } from "@/types/api";
 import { getImageUrl } from "@/lib/constants";
-import { registerPlushieClick } from "@/services/plushies";
 
 interface PlushieCardProps {
   plushie: Plushie;
@@ -20,24 +18,12 @@ const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "51999888777"
 
 export function PlushieCard({ plushie }: PlushieCardProps) {
   const addItem = useCartStore((s) => s.addItem);
-  const queryClient = useQueryClient();
+  const cartQuantity = useCartStore((s) => {
+    const item = s.items.find((i) => i.plushie_id === plushie.id);
+    return item?.quantity ?? 0;
+  });
   const imageUrl = getImageUrl(plushie.image);
   const isOutOfStock = plushie.stock === 0;
-
-  const handleCardClick = () => {
-    registerPlushieClick(plushie.id).catch(() => {});
-    queryClient.setQueriesData({ queryKey: ["plushies"], type: "active" }, (old: unknown) => {
-      if (!old || typeof old !== "object") return old;
-      const paginated = old as { results?: Plushie[] };
-      if (!paginated.results) return old;
-      return {
-        ...paginated,
-        results: paginated.results.map((p) =>
-          p.id === plushie.id ? { ...p, click_count: (p.click_count ?? 0) + 1 } : p
-        ),
-      };
-    });
-  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -64,7 +50,7 @@ export function PlushieCard({ plushie }: PlushieCardProps) {
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1.5 h-full flex flex-col border-border/60 pt-0">
-      <Link href={`/plushies/${plushie.id}`} className="block" onClick={handleCardClick}>
+      <Link href={`/plushies/${plushie.id}`} className="block">
         <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-muted to-muted/50">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -87,10 +73,12 @@ export function PlushieCard({ plushie }: PlushieCardProps) {
       <CardFooter className="mt-auto flex items-center justify-between gap-3">
         <div className="flex flex-col">
           <span className="text-lg font-bold text-primary">S/ {plushie.price}</span>
-          <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-            <MousePointerClick className="h-3 w-3" />
-            {plushie.click_count ?? 0} clics
-          </span>
+          {cartQuantity > 0 && (
+            <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+              <ShoppingCart className="h-3 w-3" />
+              {cartQuantity} en carrito
+            </span>
+          )}
         </div>
         <div className="flex gap-2">
           <Button
