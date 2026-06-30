@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingCart, MessageCircle, MousePointerClick } from "lucide-react";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import { useCartStore } from "@/stores/cart";
 import type { Plushie } from "@/types/api";
 import { getImageUrl } from "@/lib/constants";
@@ -19,11 +20,23 @@ const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "51999888777"
 
 export function PlushieCard({ plushie }: PlushieCardProps) {
   const addItem = useCartStore((s) => s.addItem);
+  const queryClient = useQueryClient();
   const imageUrl = getImageUrl(plushie.image);
   const isOutOfStock = plushie.stock === 0;
 
   const handleCardClick = () => {
     registerPlushieClick(plushie.id).catch(() => {});
+    queryClient.setQueriesData({ queryKey: ["plushies"], type: "active" }, (old: unknown) => {
+      if (!old || typeof old !== "object") return old;
+      const paginated = old as { results?: Plushie[] };
+      if (!paginated.results) return old;
+      return {
+        ...paginated,
+        results: paginated.results.map((p) =>
+          p.id === plushie.id ? { ...p, click_count: (p.click_count ?? 0) + 1 } : p
+        ),
+      };
+    });
   };
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -76,7 +89,7 @@ export function PlushieCard({ plushie }: PlushieCardProps) {
           <span className="text-lg font-bold text-primary">S/ {plushie.price}</span>
           <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
             <MousePointerClick className="h-3 w-3" />
-            {plushie.click_count} clics
+            {plushie.click_count ?? 0} clics
           </span>
         </div>
         <div className="flex gap-2">

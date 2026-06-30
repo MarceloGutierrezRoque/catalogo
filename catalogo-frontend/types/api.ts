@@ -5,7 +5,7 @@ export interface Plushie {
   price: string;
   image: string | null;
   stock: number;
-  click_count: number;
+  click_count?: number;
   is_active?: boolean;
   is_deleted?: boolean;
   created_at: string;
