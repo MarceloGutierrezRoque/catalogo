@@ -27,6 +27,20 @@ class PlushiePublicViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = PlushiePublicSerializer
     permission_classes = [AllowAny]
 
+    @extend_schema(
+        summary="Registrar clic en peluche",
+        description="Incrementa el contador de clics de un peluche.",
+        tags=["Catálogo (Público)"],
+        request=None,
+        responses={200: {"type": "object", "properties": {"click_count": {"type": "integer"}}}},
+    )
+    @action(detail=True, methods=['post'])
+    def register_click(self, request, pk=None):
+        plushie = self.get_object()
+        plushie.click_count += 1
+        plushie.save(update_fields=['click_count'])
+        return Response({'click_count': plushie.click_count})
+
 
 @extend_schema_view(
     list=extend_schema(

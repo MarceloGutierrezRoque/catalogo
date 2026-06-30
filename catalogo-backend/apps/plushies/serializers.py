@@ -7,7 +7,7 @@ class PlushiePublicSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Plushie
-        fields = ['id', 'name', 'description', 'price', 'image', 'stock', 'created_at']
+        fields = ['id', 'name', 'description', 'price', 'image', 'stock', 'click_count', 'created_at']
         read_only_fields = fields
 
 

@@ -4,11 +4,12 @@ import Link from "next/link";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ShoppingCart, MessageCircle } from "lucide-react";
+import { ShoppingCart, MessageCircle, MousePointerClick } from "lucide-react";
 import { toast } from "sonner";
 import { useCartStore } from "@/stores/cart";
 import type { Plushie } from "@/types/api";
 import { getImageUrl } from "@/lib/constants";
+import { registerPlushieClick } from "@/services/plushies";
 
 interface PlushieCardProps {
   plushie: Plushie;
@@ -20,6 +21,10 @@ export function PlushieCard({ plushie }: PlushieCardProps) {
   const addItem = useCartStore((s) => s.addItem);
   const imageUrl = getImageUrl(plushie.image);
   const isOutOfStock = plushie.stock === 0;
+
+  const handleCardClick = () => {
+    registerPlushieClick(plushie.id).catch(() => {});
+  };
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -46,7 +51,7 @@ export function PlushieCard({ plushie }: PlushieCardProps) {
 
   return (
     <Card className="group overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1.5 h-full flex flex-col border-border/60 pt-0">
-      <Link href={`/plushies/${plushie.id}`} className="block">
+      <Link href={`/plushies/${plushie.id}`} className="block" onClick={handleCardClick}>
         <div className="aspect-square relative overflow-hidden bg-gradient-to-br from-muted to-muted/50">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -67,7 +72,13 @@ export function PlushieCard({ plushie }: PlushieCardProps) {
         </CardContent>
       </Link>
       <CardFooter className="mt-auto flex items-center justify-between gap-3">
-        <span className="text-lg font-bold text-primary">S/ {plushie.price}</span>
+        <div className="flex flex-col">
+          <span className="text-lg font-bold text-primary">S/ {plushie.price}</span>
+          <span className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+            <MousePointerClick className="h-3 w-3" />
+            {plushie.click_count} clics
+          </span>
+        </div>
         <div className="flex gap-2">
           <Button
             variant="outline"
